@@ -1,9 +1,33 @@
-Syslinux Bootmenu Editor v0.1
+Syslinux Boot Menu Editor v0.1
 by Chris van Marle (qistoph)
+
+Available under GPLv3 (see LICENSE) from https://github.com/qistoph/SyslinuxEditor
+
+USAGE:
+An online version is not yet available, but I'm planning on hosting
+the Syslinux Boot Menu Editor online in the near future.
+
+The editor is developped for and tested with the currently latest version of Chrome.
+
+Write and edit a syslinux configuration file in the textbox on the right. Graphical
+menu settings will be reflected in the preview on the left. Have a look at the
+included samples, samples online or the Syslinux documentation for possibilities.
+
+To preview helptexts and highlighting, focus the preview by clicking on it, and
+use the arrow keys (up and down) to navigate through the menu.
+
+Chrome doesn't allow loading local files dynamically. Because of this the
+samples don't load properly. To view the samples you could copy paste the
+contents of a sample in the textbox.
 
 
 TODO:
+This is a list of features/improvements I've come up with. If you'd like to
+participate, you're very welcome to work on any of these.
 - Fix transparency overlay (syslinux doesn't stack, CSS does)
 - Support F1, F2 etc pages
-- Complete configuration parameter parsing/handling
+- Support sub menu's?
+- Complete configuration parsing/handling parameters that apply
 - Add color picker for easier color selection (http://www.eyecon.ro/colorpicker/?)
+- Improve some of the design of the page
+- Host online version
