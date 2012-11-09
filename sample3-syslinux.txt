@@ -1,0 +1,45 @@
+# Based on Debian PXElinux (<debian mirror>/debian/dists/squeeze/main/installer-i386/20110106+b1/images/netboot/)
+# For mirrors see: http://www.debian.org/mirror/list
+menu background sample3-splash.png
+menu color title	* #FFFFFFFF *
+menu color border	* #00000000 #00000000 none
+menu color sel		* #ffffffff #76a1d0ff *
+menu color hotsel	1;7;37;40 #ffffffff #76a1d0ff *
+menu color tabmsg	* #ffffffff #00000000 *
+menu color help		37;40 #ffdddd00 #00000000 none
+menu vshift 16
+menu rows 7
+menu helpmsgrow 12
+menu cmdlinerow 12
+menu tabmsgrow 13
+menu tabmsg Press ENTER to boot or TAB to edit a menu entry
+
+default install
+label install
+	menu label ^Install
+	kernel debian-installer/i386/linux
+	append vga=788 initrd=debian-installer/i386/initrd.gz -- quiet 
+
+label expert
+	menu label ^Expert install
+	kernel debian-installer/i386/linux
+	append priority=low vga=788 initrd=debian-installer/i386/initrd.gz -- 
+include debian-installer/i386/boot-screens/rqtxt.cfg
+label auto
+	menu label ^Automated install
+	kernel debian-installer/i386/linux
+	append auto=true priority=critical vga=788 initrd=debian-installer/i386/initrd.gz -- quiet 
+
+
+label rescue
+	menu label ^Rescue mode
+	kernel debian-installer/i386/linux
+	append vga=788 initrd=debian-installer/i386/initrd.gz rescue/enable=true -- quiet 
+
+
+label help
+	menu label ^Help
+	text help
+   Display help screens; type 'menu' at boot prompt to return to this menu
+	endtext
+	config debian-installer/i386/boot-screens/prompt.cfg
