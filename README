@@ -19,7 +19,15 @@ use the arrow keys (up and down) to navigate through the menu.
 Chrome doesn't allow loading local files dynamically. Because of this the
 samples don't load properly. To view the samples you could copy paste the
 contents of a sample in the textbox.
-
+Loading menu backgrounds locally isn't a problem though. Some examples that work
+in Chrome on Windows:
+- menu background file:///C:/syslinuxeditor/backgrounds/splash.png
+- menu background C:/syslinuxeditor/backgrounds/splash.jpg
+- menu background backgrounds/splash.png
+- menu background http://www.somesite.com/images/background640x480.jpg
+Ofcourse you'll have to make sure the path is correct(ed) when using the
+background in an actual syslinux configuration file. Online backgrounds for
+example, won't be available at boot :)
 
 TODO:
 This is a list of features/improvements I've come up with. If you'd like to
