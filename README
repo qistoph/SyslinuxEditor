@@ -1,0 +1,9 @@
+Syslinux Bootmenu Editor v0.1
+by Chris van Marle (qistoph)
+
+
+TODO:
+- Fix transparency overlay (syslinux doesn't stack, CSS does)
+- Support F1, F2 etc pages
+- Complete configuration parameter parsing/handling
+- Add color picker for easier color selection (http://www.eyecon.ro/colorpicker/?)

@@ -1,0 +1,563 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--
+See README and LICENSE for more information
+-->
+<html>
+<head>
+    <title>Syslinux Bootmenu Editor v0.1 - by qistoph</title>
+    <style>
+        @font-face
+        {
+            font-family: DosVga;
+            font-stretch: ultra-condensed;
+            src: url("Perfect DOS VGA 437.ttf");
+        }
+
+        body,html {
+            font-family: Verdana, Arial;
+            font-size: 10pt;
+        }
+        
+        .screen
+        {
+            font-family: DosVga;
+            letter-spacing: -1px;
+            
+            position: relative;
+            width: 640px;
+            height: 480px; 
+            white-space: nowrap;
+        }
+        
+        .screen:focus {
+            outline: 3px solid #0099cc;
+        }
+        
+        .menu
+        {
+            position: absolute;
+            font-size: 16px;
+            overflow: hidden;
+        }
+        
+        .title
+        {
+            position: absolute;
+            top: 16px;
+        }
+        
+        .options
+        {
+            position: absolute;
+            left: 8px;
+            top: 48px;
+        }
+        
+        .option
+        {
+            position: relative;
+            padding-left: 8px;
+            overflow: hidden;
+        }
+        
+        .helpmsg
+        {
+            position: relative;
+            display: none;
+        }
+        
+        .helpmsg.active 
+        {
+            display: block;
+        }
+        
+        .input 
+        {
+            position: absolute;
+            left: 680px;
+            top: 28px;
+        }
+    </style>
+    
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="jquery.rule.js"></script>
+
+    
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function () {
+            loadSample('sample1-syslinux.txt');
+
+	        $("#config").keyup(function (e) {
+	            var bootmenuConfig = parseConfig($("#config").val());
+	            console.log("bootmenuConfig: %o", bootmenuConfig);
+	
+	            var selection = $("#options").children(".option.selected").index();
+	            buildMenu(bootmenuConfig);
+	            setSelection(selection);
+	        });
+	
+	        $(".screen").keydown(function (e) {
+	            // 37, 38, 39, 40 => left, up, right, down
+	            if (e.keyCode == 38 || e.keyCode == 40) {
+	                var selection = $("#options").children(".option.selected").index();
+	                if (e.keyCode == 38) {
+	                    setSelection(selection - 1);
+	                } else if (e.keyCode == 40) {
+	                    setSelection(selection + 1);
+	                }
+	                event.preventDefault();
+	            }
+	        });
+        });
+
+        function loadSample(url) {
+            $.get(url, function(data) {
+                $("#config").val(data);
+
+                var bootmenuConfig = parseConfig($("#config").val());
+                buildMenu(bootmenuConfig);
+                setSelection(0);
+            });
+        }
+
+        function parseConfig(configtext) {
+            // http://www.syslinux.org/doc/menu.txt
+            // config object with defaults
+            var config = {
+                menu_title: "",
+                menu_background: "",
+                menu_width: 80,
+                menu_margin: 10, // TODO
+                menu_passwordmargin: 3, // TODO
+                menu_rows: 12,
+                menu_tabmsgrow: 18, // TODO
+                menu_cmdlinerow: 18, // TODO
+                menu_endrow: -1, // TODO
+                menu_passwordrow: 11, // TODO
+                menu_timeoutrow: 20, // TODO
+                menu_helpmsgrow: 22,
+                menu_helpmsgendrow: -1, // TODO
+                menu_hiddenrow: -2, // TODO
+                menu_hshift: 0,
+                menu_vshift: 0,
+                menu_colors: { // TODO: confirm/update defaults with syslinux' defaults
+                    "screen": {
+                        "ansi": "37;40",
+                        "foreground": "#80ffffff",
+                        "background": "#00000000",
+                        "shadow": "std"
+                    },
+                    "border": {
+                        "ansi": "30;44",
+                        "foreground": "#40000000",
+                        "background": "#90000000",
+                        "shadow": "std"
+                    },
+                    "title": {
+                        "ansi": "1;36;44",
+                        "foreground": "#c000f030",
+                        "background": "#90000000",
+                        "shadow": "std"
+                    },
+                    "unsel": {
+                        "ansi": "37;44",
+                        "foreground": "#90ffffff",
+                        "background": "#90000000",
+                        "shadow": "std"
+                    },
+                    "hotkey": {
+                        "ansi": "1;37;44",
+                        "foreground": "#9000ff00",
+                        "background": "#90000000",
+                        "shadow": "std"
+                    },
+                    "sel": {
+                        "ansi": "7;37;40",
+                        "foreground": "#ff000000",
+                        "background": "#2000ff80",
+                        "shadow": "all"
+                    },
+                    "hotsel": {
+                        "ansi": "1;7;37;40",
+                        "foreground": "#ff00c600",
+                        "background": "#2000ff80",
+                        "shadow": "all"
+                    },
+                    "disabled": {
+                        "ansi": "1;30;44",
+                        "foreground": "#60cccccc",
+                        "background": "#90000000",
+                        "shadow": "std"
+                    },
+                    "scrollbar": {
+                        "ansi": "30;44",
+                        "foreground": "#40000000",
+                        "background": "#90000000",
+                        "shadow": "std"
+                    },
+                    "tabmsg": {
+                        "ansi": "31;40",
+                        "foreground": "#90ffff00",
+                        "background": "#90000000",
+                        "shadow": "std"
+                    },
+                    "cmdmark": {
+                        "ansi": "1;36;40",
+                        "foreground": "#c000ffff",
+                        "background": "#90000000",
+                        "shadow": "std"
+                    },
+                    "cmdline": {
+                        "ansi": "37;40",
+                        "foreground": "#c0ffffff",
+                        "background": "#90000000",
+                        "shadow": "std"
+                    },
+                    "pwdborder": {
+                        "ansi": "30;47",
+                        "foreground": "#80ffffff",
+                        "background": "#20ffffff",
+                        "shadow": "std"
+                    },
+                    "pwdheader": {
+                        "ansi": "31;47",
+                        "foreground": "#80ff8080",
+                        "background": "#20ffffff",
+                        "shadow": "std"
+                    },
+                    "pwdentry": {
+                        "ansi": "30;47",
+                        "foreground": "#80ffffff",
+                        "background": "#20ffffff",
+                        "shadow": "std"
+                    },
+                    "timeout_msg": {
+                        "ansi": "37;40",
+                        "foreground": "#80ffffff",
+                        "background": "#90000000",
+                        "shadow": "std"
+                    },
+                    "timeout": {
+                        "ansi": "1;37;40",
+                        "foreground": "#c0ffffff",
+                        "background": "#90000000",
+                        "shadow": "std"
+                    },
+                    "help": {
+                        "ansi": "37;40",
+                        "foreground": "#c0ffffff",
+                        "background": "#90000000",
+                        "shadow": "std"
+                    },
+                    "msg07": {
+                        "ansi": "37;40",
+                        "foreground": "#90ffffff",
+                        "background": "#90000000",
+                        "shadow": "std"
+                    }
+                },
+                menuitems: []
+            };
+            var currentLabel;
+
+            var lines = configtext.split(/\n/);
+            for(var n=0; n<lines.length; ++n) {
+                var line = lines[n];
+
+                var m;
+                if (m = line.match(/^\s*LABEL\s*(.*)$/i)) {
+                    currentLabel = new Object();
+                    config.menuitems.push(currentLabel);
+                }
+                
+                if (m = line.match(/^\s*MENU\s+TITLE\s+(.+)$/i)) {
+                    config.menu_title = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+BACKGROUND\s+(.+)$/i)) {
+                    config.menu_background = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+WIDTH\s+(\d+)$/i)) {
+                    config.menu_width = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+MARGIN\s+(\d+)$/i)) {
+                    config.menu_margin = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+PASSWORDMARGIN\s+(\d+)$/i)) {
+                    config.menu_passwordmargin = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+ROWS\s+(\d+)$/i)) {
+                    config.menu_rows = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+TABMSGROW\s+(\d+)$/i)) {
+                    config.menu_tabmsgrow = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+CMDLINEROW\s+(\d+)$/i)) {
+                    config.menu_cmdlinerow = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+ENDROW\s+(\d+)$/i)) {
+                    config.menu_endrow = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+PASSWORDROW\s+(\d+)$/i)) {
+                    config.menu_passwordrow = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+TIMEOUTROW\s+(\d+)$/i)) {
+                    config.menu_timeoutrow = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+HELPMSGROW\s+(\d+)$/i)) {
+                    config.menu_helpmsgrow = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+HELPMSGENDROW\s+(\d+)$/i)) {
+                    config.menu_helpmsgendrow = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+HIDDENROW\s+(\d+)$/i)) {
+                    config.menu_hiddenrow = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+HSHIFT\s+(\d+)$/i)) {
+                    config.menu_hshift = m[1];
+                }
+                if (m = line.match(/^\s*MENU\s+VSHIFT\s+(\d+)$/i)) {
+                    config.menu_vshift = m[1];
+                }
+
+                if (m = line.match(/^\s*MENU\s+SEPARATOR\s*$/i)) {
+                    config.menuitems.push('---');
+                }
+                if (m = line.match(/^\s*MENU\s+LABEL\s+(.+)$/i)) {
+                    currentLabel.text = m[1];
+                    currentLabel.type = 'label';
+                }
+                if (m = line.match(/^\s*MENU\s+INDENT\s+(\d+)$/i)) {
+                    // TODO
+                    alert("MENU INDENT is not yet supported.");
+                }
+                if (m = line.match(/^\s*MENU\s+DISABLE\s*$/i)) {
+                    // TODO
+                    alert("MENU DISABLE is not yet supported.");
+                }
+                if (m = line.match(/^\s*MENU\s+HIDE\s*$/i)) {
+                    // TODO
+                    alert("MENU HIDE is not yet supported.");
+                }
+                if (m = line.match(/^\s*MENU\s+DEFAULT\s*$/i)) {
+                    // TODO
+                    alert("MENU DEFAULT is not yet supported.");
+                }
+
+                if (m = line.match(/^\s*TEXT\s+HELP\s*$/i)) {
+                    var helptext = "";
+                    while (1) {
+                        n++;
+                        var line = lines[n];
+                        if (line.match(/^\s*ENDTEXT\s*$/i)) {
+                            break;
+                        }
+                        if (helptext.length > 0) helptext += "\n";
+                        helptext += line;
+                    }
+                    currentLabel.helptext = helptext;
+                }
+
+                if(m = line.match(/^\s*MENU\s+COLOR\s+(\S+)\s*(\S*)\s*(#[0-9a-f]+)?\s*(#[0-9a-f]+)?\s*(\S*)\s*$/i)) {
+                    // Shouldn't be necessary when using defined names
+                    //if (!config.menu_colors[m[1]]) {
+                    //    config.menu_colors[m[1]] = new Object();
+                    //}
+                    if (m.length >= 2) {
+                        config.menu_colors[m[1]].ansi = m[2];
+                    }
+                    if (m.length >= 3) {
+                        config.menu_colors[m[1]].foreground = m[3];
+                    }
+                    if (m.length >= 4) {
+                        config.menu_colors[m[1]].background = m[4];
+                    }
+                    if (m.length >= 5) {
+                        config.menu_colors[m[1]].shadow = m[5];
+                    }
+                }
+            }
+
+            return config;
+        }
+
+        function buildMenu(config) {
+            // TODO: image from url/file?
+            $('#screen').css('background-image', 'url(' + config.menu_background + ')');
+
+            $("#border").html(buildBorder(config));
+
+            $("#menu").css("left", (config.menu_hshift * 8 + 8) + "px");
+            $("#menu").css("top", (config.menu_vshift * 16 + 8) + "px");
+
+            $.rule('.menu { background-color: ' + color2rgba(config.menu_colors.border.background) + '}').appendTo('style');
+            $.rule('.border { color: ' + color2rgba(config.menu_colors.border.foreground) + '}').appendTo('style');
+            $.rule('.title { color: ' + color2rgba(config.menu_colors.title.foreground) + '}').appendTo('style');
+            $.rule('.options { color: ' + color2rgba(config.menu_colors.unsel.foreground) + '}').appendTo('style');
+            $.rule('.helpmsg { top: ' + (config.menu_helpmsgrow * 16 - 8) + 'px }').appendTo('style');
+            $.rule('.helpmsg { height: ' + (480 - config.menu_helpmsgrow * 16 + 8) + 'px }').appendTo('style'); // TODO: include MENU HELPMSGENDROW
+            $.rule('.helpmsg { color: ' + color2rgba(config.menu_colors.help.foreground) + ' }').appendTo('style');
+            $.rule('.helpmsg { background-color: ' + color2rgba(config.menu_colors.help.background) + ' }').appendTo('style');
+            $.rule('.option.selected { color: ' + color2rgba(config.menu_colors.sel.foreground) + '}').appendTo('style');
+            $.rule('.option.selected { background-color: ' + color2rgba(config.menu_colors.sel.background) + '}').appendTo('style');
+            $.rule('.option .shortkey { color: ' + color2rgba(config.menu_colors.hotkey.foreground) + '}').appendTo('style');
+            $.rule('.option .shortkey { background-color: ' + color2rgba(config.menu_colors.hotkey.background) + '}').appendTo('style');
+            $.rule('.option.selected .shortkey { color: ' + color2rgba(config.menu_colors.hotsel.foreground) + '}').appendTo('style');
+            $.rule('.option.selected .shortkey { background-color: ' + color2rgba(config.menu_colors.hotsel.background) + '}').appendTo('style');
+
+            setTitle(config);
+            buildOptions(config);
+        }
+
+        function color2rgba(str) {
+            // #2000ff80
+            // rgba(0, 255, 128, 0.5)
+            var m;
+            if (m = str.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i)) {
+                var rgba = 'rgba(';
+
+                rgba += parseInt(m[2], 16);
+                rgba += ', ';
+                rgba += parseInt(m[3], 16);
+                rgba += ', ';
+                rgba += parseInt(m[4], 16);
+                rgba += ', ';
+                rgba += parseInt(m[1], 16) / 256;
+
+                rgba += ')';
+
+                return rgba;
+            }
+
+            throw "Illegal color in color2rgba: "+str;
+        }
+
+        function buildBorder(config) {
+            var width = config.menu_width;
+            var cornerTopLeft = "&#218;";
+            var cornerTopRight = "&#191;";
+            var cornerBottomLeft = "&#192;";
+            var cornerBottomRight = "&#217;";
+            var horizontal = "&#196;";
+            var vertical = "&#179;";
+            var tLeft = "&#195";
+            var tRight = "&#180";
+
+            var borderHtml = "";
+
+            // Border top
+            borderHtml = cornerTopLeft;
+            for (var x = 0; x < (width - 2); ++x) {
+                borderHtml += horizontal;
+            }
+            borderHtml += cornerTopRight;
+            borderHtml += "<br/>";
+
+            // Title
+            borderHtml += vertical;
+            for (var x = 0; x < (width - 2); ++x) {
+                borderHtml += "&nbsp;";
+            }
+            borderHtml += vertical;
+            borderHtml += "<br/>";
+
+            borderHtml += tLeft;
+            for (var x = 0; x < (width - 2); ++x) {
+                borderHtml += horizontal;
+            }
+            borderHtml += tRight;
+            borderHtml += "<br/>";
+
+            // Option rows
+            for (var y = 0; y < config.menu_rows; ++y) {
+                borderHtml += vertical;
+                for (var x = 0; x < (width - 2); ++x) {
+                    borderHtml += "&nbsp;";
+                }
+                borderHtml += vertical;
+                borderHtml += "<br/>";
+            }
+
+            // Border bottom
+            borderHtml += cornerBottomLeft;
+            for (var x = 0; x < (width - 2); ++x) {
+                borderHtml += horizontal;
+            }
+            borderHtml += cornerBottomRight;
+            borderHtml += "<br/>";
+
+            return borderHtml;
+        }
+
+        function buildOptions(config) {
+            $("#options").css("width", (8 * (config.menu_width - 2)) + "px");
+
+            $("#options").empty();
+            $("#screen").children(".helpmsg").remove();
+            for (var n in config.menuitems) {
+                if (config.menuitems[n] == '---') { // TODO: separator
+                    $("<div/>", { class: 'option', html: '---' }).appendTo("#options");
+                } else {
+                    var text = config.menuitems[n].text;
+                    var shortkeyIndex;
+                    if ((shortkeyIndex = text.indexOf('^')) >= 0) {
+                        text = text.substr(0, shortkeyIndex) +
+                            '<span class="shortkey">' + text.substr(shortkeyIndex + 1, 1) + '</span>' +
+                            text.substr(shortkeyIndex + 2);
+                    }
+
+                    $("<div/>", { class: 'option', html: text }).appendTo("#options");
+
+                    var helptext = config.menuitems[n].helptext;
+                    if (helptext) {
+                        helptext = helptext.replace(/\n/g, "<br/>\n");
+                        helptext = helptext.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"); // TODO: fix 1 char difference
+                        helptext = helptext.replace(/ /g, "&nbsp;");
+                        $('<div/>', { id: 'helpmsg_' + n, class: 'helpmsg', html: helptext }).appendTo("#screen");
+                    }
+                }
+            }
+        }
+
+        function setSelection(selection) {
+            if (selection < 0) selection = 0;
+            var max = $("#options").children(".option").length-1;
+            if (selection > max) selection = max;
+            $("#options").children(".option.selected").removeClass("selected");
+            $("#options").children(".option:nth-child(" + (selection + 1) + ")").addClass("selected");
+
+            $(".helpmsg.active").removeClass("active");
+            $("#helpmsg_" + selection).addClass("active");
+        }
+
+        function setTitle(config) {
+            $("#title").css("left", (8 * (config.menu_width - config.menu_title.length) / 2) + "px");
+            $("#title").text(config.menu_title);
+        }
+    </script>
+</head>
+<body>
+    <b>Syslinux Bootmenu Editor v0.1</b>
+
+    <div id="screen" class="screen" tabindex="0">
+        <div id="menu" class="menu">
+            <div id="border" class="border"></div>
+            <div id="title" class="title"></div>
+            <div id="options" class="options"></div>
+        </div>
+        <div id="helpmsg" class="helpmsg"></div>
+    </div>
+
+    <div id="input" class="input">
+        <a href="#" onClick="loadSample('sample1-syslinux.txt')">Sample 1</a>
+        <a href="#" onClick="loadSample('sample2-syslinux.txt')">Sample 2</a><br/>
+        <textarea id="config" rows="30" cols="80"></textarea>
+    </div>
+
+    By Chris van Marle (qistoph)<br/>
+    <b>using:</b><br/>
+    <a href="http://jquery.com/">jQuery</a><br />
+    <a href="http://flesler.blogspot.nl/2007/11/jqueryrule.html">jQuery.Rule</a><br />
+    <a href="http://www.dafont.com/perfect-dos-vga-437.font">Perfect DOS VGA 437 font</a><br />
+    <a href="http://www.syslinux.org/doc/menu.txt">Syslinux documentation</a>
+</body>
+</html>
