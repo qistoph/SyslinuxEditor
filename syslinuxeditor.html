@@ -132,17 +132,6 @@ See README and LICENSE for more information
 			});
 		}
 		
-		function checkVersion() {
-			$.get('https://api.github.com/repos/qistoph/SyslinuxEditor/compare/HEAD...' + git_version, function(data) {
-				console.log(data);
-				if(data.status == 'behind') {
-					$("#gitstatus").html('This version is <a href="https://github.com/qistoph/SyslinuxEditor/commits/" target="_blank">'+data.behind_by+' commit(s) behind</a> on Github.');
-				} else {
-					$("#gitstatus").html("This version is up to date with Github.");
-				}
-			});
-		}
-
 		function parseConfig(configtext) {
 			// http://www.syslinux.org/doc/menu.txt
 			// config object with defaults
@@ -596,7 +585,7 @@ See README and LICENSE for more information
 	By Chris van Marle (qistoph)<br/>
 	Available under GPLv3 (see <a href="LICENSE">LICENSE</a>) from <a href="https://github.com/qistoph/SyslinuxEditor">https://github.com/qistoph/SyslinuxEditor</a><br/>
 	More information in <a href="README">README</a><br/>
-	<span id="gitstatus"><a href="#" onClick="checkVersion(); return false">check version</a></span><br/>
+	<span id="gitstatus"><script>document.write('This page is based on commit: '+git_version.substring(0, 10)+'. Check Github for <a href="https://github.com/qistoph/SyslinuxEditor/compare/'+git_version+'...master" target="_blank">updates</a>')</script>.</span><br/>
 	<br/>
 	<b>Using:</b><br/>
 	<a href="http://jquery.com/">jQuery</a><br />
