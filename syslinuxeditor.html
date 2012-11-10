@@ -111,7 +111,7 @@ See README and LICENSE for more information
 		});
 
 		function loadSample(url) {
-			$.get(url, function(data) {
+			$.get(url + "?" + Math.random(), function(data) {
 				$("#config").val(data);
 
 				var bootmenuConfig = parseConfig($("#config").val());

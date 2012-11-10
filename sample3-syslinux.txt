@@ -1,5 +1,10 @@
 # Based on Debian PXElinux (<debian mirror>/debian/dists/squeeze/main/installer-i386/20110106+b1/images/netboot/)
 # For mirrors see: http://www.debian.org/mirror/list
+
+menu hshift 15
+menu width 49
+menu title Installer boot menu
+
 menu background sample3-splash.png
 menu color title	* #FFFFFFFF *
 menu color border	* #00000000 #00000000 none
