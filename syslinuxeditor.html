@@ -556,9 +556,7 @@ See README and LICENSE for more information
 		}
 		
 		function setTabmsg(config) {
-			console.log(config.menu_width);
-			console.log(config.menu_tabmsg.length);
-			$("#tabmsg").css("left", (8 * ((config.menu_width - config.menu_tabmsg.length) / 2 + config.menu_hshift)) + "px");
+			$("#tabmsg").css("left", (8 * ((config.menu_width - config.menu_tabmsg.length) / 2 + config.menu_hshift) + 8) + "px");
 			$("#tabmsg").css("top", (16 * (config.menu_vshift + config.menu_tabmsgrow) - 8) + "px");
 			$("#tabmsg").text(config.menu_tabmsg);
 		}
