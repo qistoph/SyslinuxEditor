@@ -89,7 +89,8 @@ See README and LICENSE for more information
 
 			$("#config").keyup(function (e) {
 				var bootmenuConfig = parseConfig($("#config").val());
-				console.log("bootmenuConfig: %o", bootmenuConfig);
+				//console.log("bootmenuConfig: %o", bootmenuConfig);
+				//console.log(JSON.stringify(bootmenuConfig.menu_colors, null, "\t"));
 	
 				var selection = $("#options").children(".option.selected").index();
 				buildMenu(bootmenuConfig);
@@ -140,7 +141,7 @@ See README and LICENSE for more information
 				menu_hiddenrow: -2, // TODO
 				menu_hshift: 0,
 				menu_vshift: 0,
-				menu_colors: { // TODO: confirm/update defaults with syslinux' defaults
+				menu_colors: {
 					"screen": {
 						"ansi": "37;40",
 						"foreground": "#80ffffff",
@@ -150,67 +151,67 @@ See README and LICENSE for more information
 					"border": {
 						"ansi": "30;44",
 						"foreground": "#40000000",
-						"background": "#90000000",
+						"background": "#00000000",
 						"shadow": "std"
 					},
 					"title": {
 						"ansi": "1;36;44",
-						"foreground": "#c000f030",
-						"background": "#90000000",
+						"foreground": "#c00090f0",
+						"background": "#00000000",
 						"shadow": "std"
 					},
 					"unsel": {
 						"ansi": "37;44",
 						"foreground": "#90ffffff",
-						"background": "#90000000",
+						"background": "#00000000",
 						"shadow": "std"
 					},
 					"hotkey": {
 						"ansi": "1;37;44",
-						"foreground": "#9000ff00",
-						"background": "#90000000",
+						"foreground": "#ffffffff",
+						"background": "#00000000",
 						"shadow": "std"
 					},
 					"sel": {
 						"ansi": "7;37;40",
-						"foreground": "#ff000000",
-						"background": "#2000ff80",
+						"foreground": "#e0000000",
+						"background": "#20ff8000",
 						"shadow": "all"
 					},
 					"hotsel": {
 						"ansi": "1;7;37;40",
-						"foreground": "#ff00c600",
-						"background": "#2000ff80",
+						"foreground": "#e0400000",
+						"background": "#20ff8000",
 						"shadow": "all"
 					},
 					"disabled": {
 						"ansi": "1;30;44",
 						"foreground": "#60cccccc",
-						"background": "#90000000",
+						"background": "#00000000",
 						"shadow": "std"
 					},
 					"scrollbar": {
 						"ansi": "30;44",
 						"foreground": "#40000000",
-						"background": "#90000000",
+						"background": "#00000000",
 						"shadow": "std"
 					},
 					"tabmsg": {
 						"ansi": "31;40",
 						"foreground": "#90ffff00",
-						"background": "#90000000",
+						"background": "#00000000",
 						"shadow": "std"
 					},
 					"cmdmark": {
 						"ansi": "1;36;40",
 						"foreground": "#c000ffff",
-						"background": "#90000000",
+						"background": "#00000000",
 						"shadow": "std"
 					},
 					"cmdline": {
 						"ansi": "37;40",
 						"foreground": "#c0ffffff",
-						"background": "#90000000",
+						"background": "#00000000",
 						"shadow": "std"
 					},
 					"pwdborder": {
@@ -234,25 +235,25 @@ See README and LICENSE for more information
 					"timeout_msg": {
 						"ansi": "37;40",
 						"foreground": "#80ffffff",
-						"background": "#90000000",
+						"background": "#00000000",
 						"shadow": "std"
 					},
 					"timeout": {
 						"ansi": "1;37;40",
 						"foreground": "#c0ffffff",
-						"background": "#90000000",
+						"background": "#00000000",
 						"shadow": "std"
 					},
 					"help": {
 						"ansi": "37;40",
 						"foreground": "#c0ffffff",
-						"background": "#90000000",
+						"background": "#00000000",
 						"shadow": "std"
 					},
 					"msg07": {
 						"ansi": "37;40",
 						"foreground": "#90ffffff",
-						"background": "#90000000",
+						"background": "#00000000",
 						"shadow": "std"
 					}
 				},
