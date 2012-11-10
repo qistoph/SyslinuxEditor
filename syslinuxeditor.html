@@ -46,6 +46,17 @@ See README and LICENSE for more information
 			top: 16px;
 		}
 		
+		.tabmsg
+		{
+			position: absolute;
+			display: block; /* easier for now, TODO: change to none */
+		}
+		
+		.tabmsg.active 
+		{
+			display: block;
+		}
+		
 		.options
 		{
 			position: absolute;
@@ -127,11 +138,12 @@ See README and LICENSE for more information
 			var config = {
 				menu_title: "",
 				menu_background: "",
+				menu_tabmsg: "Press [Tab] to edit options",
 				menu_width: 80,
-				menu_margin: 10, // TODO
+				menu_margin: 10,
 				menu_passwordmargin: 3, // TODO
 				menu_rows: 12,
-				menu_tabmsgrow: 18, // TODO
+				menu_tabmsgrow: 18,
 				menu_cmdlinerow: 18, // TODO
 				menu_endrow: -1, // TODO
 				menu_passwordrow: 11, // TODO
@@ -277,6 +289,9 @@ See README and LICENSE for more information
 				if (m = line.match(/^\s*MENU\s+BACKGROUND\s+(.+)$/i)) {
 					config.menu_background = m[1];
 				}
+				if (m = line.match(/^\s*MENU\s+TABMSG\s+(.+)$/i)) {
+					config.menu_tabmsg = m[1];
+				}
 				if (m = line.match(/^\s*MENU\s+WIDTH\s+(\d+)$/i)) {
 					config.menu_width = parseInt(m[1]);
 				}
@@ -387,12 +402,13 @@ See README and LICENSE for more information
 
 			$("#border").html(buildBorder(config));
 
-			$("#menu").css("left", (config.menu_hshift * 8 + 8) + "px");
+			$("#menu").css("left", ((config.menu_hshift + config.menu_margin) * 8 + 8) + "px");
 			$("#menu").css("top", (config.menu_vshift * 16 + 8) + "px");
 
 			$.rule('.menu { background-color: ' + color2rgba(config.menu_colors.border.background) + '}').appendTo('style');
 			$.rule('.border { color: ' + color2rgba(config.menu_colors.border.foreground) + '}').appendTo('style');
 			$.rule('.title { color: ' + color2rgba(config.menu_colors.title.foreground) + '}').appendTo('style');
+			$.rule('.tabmsg { color: ' + color2rgba(config.menu_colors.tabmsg.foreground) + '}').appendTo('style');
 			$.rule('.options { color: ' + color2rgba(config.menu_colors.unsel.foreground) + '}').appendTo('style');
 			$.rule('.helpmsg { top: ' + ((config.menu_helpmsgrow + config.menu_vshift) * 16 - 8) + 'px }').appendTo('style');
 			$.rule('.helpmsg { height: ' + (480 - config.menu_helpmsgrow * 16 + 8) + 'px }').appendTo('style'); // TODO: include MENU HELPMSGENDROW
@@ -406,6 +422,7 @@ See README and LICENSE for more information
 			$.rule('.option.selected .shortkey { background-color: ' + color2rgba(config.menu_colors.hotsel.background) + '}').appendTo('style');
 
 			setTitle(config);
+			setTabmsg(config);
 			buildOptions(config);
 		}
 
@@ -433,7 +450,7 @@ See README and LICENSE for more information
 		}
 
 		function buildBorder(config) {
-			var width = config.menu_width;
+			var width = config.menu_width - 2 * config.menu_margin;
 			var cornerTopLeft = "&#218;";
 			var cornerTopRight = "&#191;";
 			var cornerBottomLeft = "&#192;";
@@ -490,7 +507,7 @@ See README and LICENSE for more information
 		}
 
 		function buildOptions(config) {
-			$("#options").css("width", (8 * (config.menu_width - 2)) + "px");
+			$("#options").css("width", (8 * (config.menu_width - 2*config.menu_margin - 2)) + "px");
 
 			$("#options").empty();
 			$("#screen").children(".helpmsg").remove();
@@ -528,11 +545,22 @@ See README and LICENSE for more information
 
 			$(".helpmsg.active").removeClass("active");
 			$("#helpmsg_" + selection).addClass("active");
+			if($("#helpmsg_" + selection).length > 0) {
+				$(".tabmsg").removeClass("active");
+			}
 		}
 
 		function setTitle(config) {
-			$("#title").css("left", (8 * (config.menu_width - config.menu_title.length) / 2) + "px");
+			$("#title").css("left", (8 * (config.menu_width - 2*config.menu_margin - config.menu_title.length) / 2) + "px");
 			$("#title").text(config.menu_title);
+		}
+		
+		function setTabmsg(config) {
+			console.log(config.menu_width);
+			console.log(config.menu_tabmsg.length);
+			$("#tabmsg").css("left", (8 * ((config.menu_width - config.menu_tabmsg.length) / 2 + config.menu_hshift)) + "px");
+			$("#tabmsg").css("top", (16 * (config.menu_vshift + config.menu_tabmsgrow) - 8) + "px");
+			$("#tabmsg").text(config.menu_tabmsg);
 		}
 	</script>
 </head>
@@ -546,6 +574,7 @@ See README and LICENSE for more information
 			<div id="options" class="options"></div>
 		</div>
 		<div id="helpmsg" class="helpmsg"></div>
+		<div id="tabmsg" class="tabmsg active"></div>
 	</div>
 
 	<div id="input" class="input">
