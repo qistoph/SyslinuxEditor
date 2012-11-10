@@ -278,46 +278,46 @@ See README and LICENSE for more information
 					config.menu_background = m[1];
 				}
 				if (m = line.match(/^\s*MENU\s+WIDTH\s+(\d+)$/i)) {
-					config.menu_width = m[1];
+					config.menu_width = parseInt(m[1]);
 				}
 				if (m = line.match(/^\s*MENU\s+MARGIN\s+(\d+)$/i)) {
-					config.menu_margin = m[1];
+					config.menu_margin = parseInt(m[1]);
 				}
 				if (m = line.match(/^\s*MENU\s+PASSWORDMARGIN\s+(\d+)$/i)) {
-					config.menu_passwordmargin = m[1];
+					config.menu_passwordmargin = parseInt(m[1]);
 				}
 				if (m = line.match(/^\s*MENU\s+ROWS\s+(\d+)$/i)) {
-					config.menu_rows = m[1];
+					config.menu_rows = parseInt(m[1]);
 				}
 				if (m = line.match(/^\s*MENU\s+TABMSGROW\s+(\d+)$/i)) {
-					config.menu_tabmsgrow = m[1];
+					config.menu_tabmsgrow = parseInt(m[1]);
 				}
 				if (m = line.match(/^\s*MENU\s+CMDLINEROW\s+(\d+)$/i)) {
-					config.menu_cmdlinerow = m[1];
+					config.menu_cmdlinerow = parseInt(m[1]);
 				}
 				if (m = line.match(/^\s*MENU\s+ENDROW\s+(\d+)$/i)) {
-					config.menu_endrow = m[1];
+					config.menu_endrow = parseInt(m[1]);
 				}
 				if (m = line.match(/^\s*MENU\s+PASSWORDROW\s+(\d+)$/i)) {
-					config.menu_passwordrow = m[1];
+					config.menu_passwordrow = parseInt(m[1]);
 				}
 				if (m = line.match(/^\s*MENU\s+TIMEOUTROW\s+(\d+)$/i)) {
-					config.menu_timeoutrow = m[1];
+					config.menu_timeoutrow = parseInt(m[1]);
 				}
 				if (m = line.match(/^\s*MENU\s+HELPMSGROW\s+(\d+)$/i)) {
-					config.menu_helpmsgrow = m[1];
+					config.menu_helpmsgrow = parseInt(m[1]);
 				}
 				if (m = line.match(/^\s*MENU\s+HELPMSGENDROW\s+(\d+)$/i)) {
-					config.menu_helpmsgendrow = m[1];
+					config.menu_helpmsgendrow = parseInt(m[1]);
 				}
 				if (m = line.match(/^\s*MENU\s+HIDDENROW\s+(\d+)$/i)) {
-					config.menu_hiddenrow = m[1];
+					config.menu_hiddenrow = parseInt(m[1]);
 				}
 				if (m = line.match(/^\s*MENU\s+HSHIFT\s+(\d+)$/i)) {
-					config.menu_hshift = m[1];
+					config.menu_hshift = parseInt(m[1]);
 				}
 				if (m = line.match(/^\s*MENU\s+VSHIFT\s+(\d+)$/i)) {
-					config.menu_vshift = m[1];
+					config.menu_vshift = parseInt(m[1]);
 				}
 
 				if (m = line.match(/^\s*MENU\s+SEPARATOR\s*$/i)) {
@@ -394,7 +394,7 @@ See README and LICENSE for more information
 			$.rule('.border { color: ' + color2rgba(config.menu_colors.border.foreground) + '}').appendTo('style');
 			$.rule('.title { color: ' + color2rgba(config.menu_colors.title.foreground) + '}').appendTo('style');
 			$.rule('.options { color: ' + color2rgba(config.menu_colors.unsel.foreground) + '}').appendTo('style');
-			$.rule('.helpmsg { top: ' + (config.menu_helpmsgrow * 16 - 8) + 'px }').appendTo('style');
+			$.rule('.helpmsg { top: ' + ((config.menu_helpmsgrow + config.menu_vshift) * 16 - 8) + 'px }').appendTo('style');
 			$.rule('.helpmsg { height: ' + (480 - config.menu_helpmsgrow * 16 + 8) + 'px }').appendTo('style'); // TODO: include MENU HELPMSGENDROW
 			$.rule('.helpmsg { color: ' + color2rgba(config.menu_colors.help.foreground) + ' }').appendTo('style');
 			$.rule('.helpmsg { background-color: ' + color2rgba(config.menu_colors.help.background) + ' }').appendTo('style');
