@@ -27,8 +27,8 @@ function yesno() {
 
 if yesno "Is everything commited and synced to GitHub?"; then
 	git archive HEAD > archive.tar
-	git log --pretty=oneline -1 > git-commit
-	tar rf archive.tar git-commit
+	git log --pretty=oneline -1 | sed 's/^\(\S\+\).*/git_version = "\1"/' > git-version.js
+	tar rf archive.tar git-version.js
 	gzip -9 archive.tar
 	rm -f git-commit
 else

@@ -92,7 +92,7 @@ See README and LICENSE for more information
 	
 	<script type="text/javascript" src="jquery.js"></script>
 	<script type="text/javascript" src="jquery.rule.js"></script>
-
+	<script type="text/javascript" src="git-version.js"></script>
 	
 	<script type="text/javascript" language="javascript">
 		$(document).ready(function () {
@@ -129,6 +129,17 @@ See README and LICENSE for more information
 				var bootmenuConfig = parseConfig($("#config").val());
 				buildMenu(bootmenuConfig);
 				setSelection(0);
+			});
+		}
+		
+		function checkVersion() {
+			$.get('https://api.github.com/repos/qistoph/SyslinuxEditor/compare/HEAD...' + git_version, function(data) {
+				console.log(data);
+				if(data.status == 'behind') {
+					$("#gitstatus").html('This version is <a href="https://github.com/qistoph/SyslinuxEditor/commits/" target="_blank">'+data.behind_by+' commit(s) behind</a> on Github.');
+				} else {
+					$("#gitstatus").html("This version is up to date with Github.");
+				}
 			});
 		}
 
@@ -585,6 +596,7 @@ See README and LICENSE for more information
 	By Chris van Marle (qistoph)<br/>
 	Available under GPLv3 (see <a href="LICENSE">LICENSE</a>) from <a href="https://github.com/qistoph/SyslinuxEditor">https://github.com/qistoph/SyslinuxEditor</a><br/>
 	More information in <a href="README">README</a><br/>
+	<span id="gitstatus"><a href="#" onClick="checkVersion(); return false">check version</a></span><br/>
 	<br/>
 	<b>Using:</b><br/>
 	<a href="http://jquery.com/">jQuery</a><br />

@@ -32,6 +32,7 @@ example, won't be available at boot :)
 TODO:
 This is a list of features/improvements I've come up with. If you'd like to
 participate, you're very welcome to work on any of these.
+- git-version.js placeholder for offline versions
 - Fix transparency overlay (syslinux doesn't stack, CSS does)
 - Support F1, F2 etc pages
 - Support sub menu's?

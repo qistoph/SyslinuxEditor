@@ -1,2 +1,3 @@
 *.bak
 archive.tar.gz
+git-version.js
